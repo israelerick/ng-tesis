@@ -1,0 +1,99 @@
+<router-outlet></router-outlet>
+
+
+<mat-vertical-stepper #stepper>
+  <mat-step>
+    
+    <ng-template matStepLabel>Importar datos</ng-template>
+    <div fxLayout="column">
+      <div fxLayout="row">
+        <button mat-button color="warn" (click)="onClick()">  
+          <mat-icon>file_upload</mat-icon>  
+          Upload  
+        </button>
+        <span *ngIf="file">{{file.name}}</span>        
+        <input type="file" #fileUpload accept=".xlsx" style="display:none;" />
+      </div>
+      <div fxLayout="row">
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Hoja del Excel</mat-label>
+          <mat-select [formControl]="sheets" (ngModelChange)="readColumn()">
+            <mat-option *ngFor="let row of arr_hoja" [value]="row.name">
+              {{row.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Numero de Fila</mat-label>
+          <input matInput [formControl]="rows" type="number" >
+        </mat-form-field>
+      </div>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de transación</mat-label>
+        <mat-select [formControl]="tabla_cbx" (ngModelChange)="readColumn()">
+          <mat-option *ngFor="let tabla of tablas" [value]="tabla.NUMERO">
+            {{tabla.TABLA}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+   
+    <div>
+      <button mat-button (click)="loadFile()">Siguiente</button>
+    </div>
+  
+  </mat-step>
+
+  <mat-step>
+  
+    <ng-template matStepLabel>Excel</ng-template>
+
+  <div class="example-container mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+  
+      <ng-container *ngFor="let rw of columnXls" [matColumnDef]="rw">
+        <th mat-header-cell *matHeaderCellDef> 
+    
+          <mat-form-field>
+            <mat-label>{{rw}}</mat-label>
+            <mat-select #cbx (selectionChange)="selectColumna(cbx.value, rw)">
+              <mat-option *ngFor="let row of dataTable" [value]="row.id">
+                {{row.nombre}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+    
+        </th>
+    
+        <td mat-cell *matCellDef="let element"> {{element[rw]}} </td>
+    
+      </ng-container>
+    
+    
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>  
+    
+    <div>
+      <button mat-button matStepperPrevious>Atras</button>
+      <button mat-button matStepperNext (click)="uploadExcel()">Siguiente</button>
+    </div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Terminado</ng-template>
+    <p>Se relizo la importación de los datos</p>
+    <div>
+      <button mat-button matStepperPrevious>Atras</button>
+      <a mat-flat-button href="http://localhost:4000/profile" target="_self">Volver atras</a>
+    </div>
+  </mat-step>
+
+</mat-vertical-stepper>
